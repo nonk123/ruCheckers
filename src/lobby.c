@@ -1,4 +1,5 @@
 #include "lobby.h"
+#include "__gen.h"
 #include "state.h"
 
 #include "caulk.h"
@@ -64,4 +65,16 @@ bool getLobbyId(size_t idx) {
 	ISteamMatchmaking* mm = caulk_SteamMatchmaking();
 	CSteamID id = caulk_ISteamMatchmaking_GetLobbyByIndex(mm, idx);
 	return true;
+}
+
+void leaveLobby() {
+	if (lobbying && curLobby) {
+		ISteamMatchmaking* mm = caulk_SteamMatchmaking();
+		caulk_ISteamMatchmaking_LeaveLobby(mm, curLobby);
+	}
+
+	lobbying = false;
+	curLobby = 0;
+
+	setState(ST_LOBBIES);
 }

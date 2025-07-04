@@ -38,6 +38,8 @@ int main(int argc, char* argv[]) {
 		stateDraw();
 	}
 
+	leaveLobby();
+
 	if (steamInited)
 		caulk_Shutdown();
 

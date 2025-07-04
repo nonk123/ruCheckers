@@ -1,9 +1,10 @@
 #include "raylib.h"
 
-#include "state.h"
+#include "lobby.h"
 
 void stGameUpdate() {
-	exitOnEsc();
+	if (IsKeyPressed(KEY_ESCAPE))
+		leaveLobby();
 }
 
 void stGameDraw() {
