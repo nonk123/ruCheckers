@@ -1,9 +1,7 @@
-#include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "__gen.h"
 #include "caulk.h"
 #include "raylib.h"
 
