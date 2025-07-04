@@ -3,15 +3,15 @@
 
 #include "state.h"
 
-static size_t curState = ST_LOBBIES;
+static size_t curState = ST_MENU;
 struct State {
 	void (*update)(), (*draw)();
 };
 
-extern void stLobbiesUpdate(), stLobbiesDraw();
+extern void stMenuUpdate(), stMenuDraw();
 extern void stGameUpdate(), stGameDraw();
 static const struct State states[] = {
-    [ST_LOBBIES] = {stLobbiesUpdate, stLobbiesDraw},
+    [ST_MENU] = {stMenuUpdate, stMenuDraw},
     [ST_GAME] = {stGameUpdate, stGameDraw},
 };
 

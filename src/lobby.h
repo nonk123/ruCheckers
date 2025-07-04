@@ -2,10 +2,13 @@
 
 #include <stddef.h>
 
+#include "caulk.h"
+
 void lobbyInit();
 
+bool getLobbyId(size_t, CSteamID*);
 size_t lobbyCount();
 void leaveLobby();
 
-void requestLobbies();
-void requestCreateLobby();
+void refreshLobbiesList();
+void requestCreateLobby(), requestJoinLobby();

@@ -2,6 +2,7 @@
 #include <stdlib.h>
 
 #include "caulk.h"
+#include "clock.h"
 #include "raylib.h"
 
 #include "lobby.h"
@@ -19,12 +20,13 @@ int main(int argc, char* argv[]) {
 	SetConfigFlags(FLAG_WINDOW_RESIZABLE);
 
 	InitWindow(800, 600, "Russian Checkers");
-	SetWindowState(FLAG_WINDOW_MAXIMIZED);
-
+	// ugly: SetWindowState(FLAG_WINDOW_MAXIMIZED);
 	InitAudioDevice();
 
 	SetExitKey(KEY_NULL);
 	SetTargetFPS(60);
+
+	clockInit();
 
 	if (!caulk_Init())
 		panic("Failed to connect to Steam!");

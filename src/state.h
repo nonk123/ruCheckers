@@ -3,7 +3,7 @@
 #include <stddef.h>
 
 enum {
-	ST_LOBBIES,
+	ST_MENU,
 	ST_GAME,
 };
 

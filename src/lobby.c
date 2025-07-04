@@ -4,7 +4,7 @@
 
 #include "caulk.h"
 
-static bool lobbying = false;
+static bool inLobby = false;
 static size_t lobbyCountFr = 0;
 static CSteamID curLobby = 0;
 
@@ -12,13 +12,16 @@ size_t lobbyCount() {
 	return lobbyCountFr;
 }
 
-static void onCreateLobby(void* tmp) {
-	LobbyCreated_t* data = tmp;
-	lobbying = data->m_eResult == k_EResultOK;
-	if (!lobbying)
-		return;
-
+static void onCreateLobby(void* pData) {
+	LobbyCreated_t* data = pData;
+	inLobby = data->m_eResult == k_EResultOK;
 	curLobby = data->m_ulSteamIDLobby;
+
+	if (!inLobby || !curLobby) {
+		leaveLobby();
+		return;
+	}
+
 	ISteamMatchmaking* mm = caulk_SteamMatchmaking();
 	caulk_ISteamMatchmaking_SetLobbyData(mm, curLobby, "ruCheckers", "fimoz");
 }
@@ -27,14 +30,9 @@ static void onEnterLobby() {
 	setState(ST_GAME);
 }
 
-static void resolveCreateLobby(void* data, bool failed) {
-	lobbying = !failed;
-}
-
 void lobbyInit() {
 	caulk_Register(LobbyCreated_t_iCallback, onCreateLobby);
 	caulk_Register(LobbyEnter_t_iCallback, onEnterLobby);
-	requestLobbies();
 }
 
 void resolveLobbies(void* data, bool failed) {
@@ -42,7 +40,7 @@ void resolveLobbies(void* data, bool failed) {
 		lobbyCountFr = ((LobbyMatchList_t*)data)->m_nLobbiesMatching;
 }
 
-void requestLobbies() {
+void refreshLobbiesList() {
 	ISteamMatchmaking* mm = caulk_SteamMatchmaking();
 	caulk_ISteamMatchmaking_AddRequestLobbyListStringFilter(mm, "ruCheckers", "fimoz", k_ELobbyComparisonEqual);
 	SteamAPICall_t cb = caulk_ISteamMatchmaking_RequestLobbyList(mm);
@@ -51,30 +49,37 @@ void requestLobbies() {
 }
 
 void requestCreateLobby() {
-	if (lobbying)
+	if (inLobby)
 		return;
 	ISteamMatchmaking* mm = caulk_SteamMatchmaking();
-	SteamAPICall_t cb = caulk_ISteamMatchmaking_CreateLobby(mm, k_ELobbyTypeFriendsOnly, 2);
-	caulk_Resolve(cb, resolveCreateLobby);
-	lobbying = true;
+	caulk_ISteamMatchmaking_CreateLobby(mm, k_ELobbyTypeFriendsOnly, 2);
+	inLobby = true;
 }
 
-bool getLobbyId(size_t idx) {
-	if (idx >= lobbyCount())
+void requestJoinLobby() {
+	CSteamID id;
+	if (getLobbyId(0, &id)) {
+		ISteamMatchmaking* mm = caulk_SteamMatchmaking();
+		caulk_ISteamMatchmaking_JoinLobby(mm, id);
+	}
+}
+
+bool getLobbyId(size_t idx, CSteamID* out) {
+	if (inLobby || idx >= lobbyCount())
 		return false;
 	ISteamMatchmaking* mm = caulk_SteamMatchmaking();
-	CSteamID id = caulk_ISteamMatchmaking_GetLobbyByIndex(mm, idx);
+	*out = caulk_ISteamMatchmaking_GetLobbyByIndex(mm, idx);
 	return true;
 }
 
 void leaveLobby() {
-	if (lobbying && curLobby) {
+	if (inLobby && curLobby) {
 		ISteamMatchmaking* mm = caulk_SteamMatchmaking();
 		caulk_ISteamMatchmaking_LeaveLobby(mm, curLobby);
 	}
 
-	lobbying = false;
+	inLobby = false;
 	curLobby = 0;
 
-	setState(ST_LOBBIES);
+	setState(ST_MENU);
 }
