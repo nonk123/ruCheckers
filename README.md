@@ -1,0 +1,3 @@
+# ruCheckers
+
+TODO: explain.
