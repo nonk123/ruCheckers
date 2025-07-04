@@ -22,6 +22,11 @@ FetchContent_Declare(
 
 FetchContent_MakeAvailable(caulk raylib)
 
-add_executable(${PROJECT_NAME} main.c)
+set(SRC_DIR ${CMAKE_SOURCE_DIR}/src)
+file(GLOB_RECURSE SOURCES ${SRC_DIR}/*.c)
+file(GLOB_RECURSE HEADERS ${SRC_DIR}/*.h)
+
+add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS})
 target_link_libraries(${PROJECT_NAME} raylib)
+target_include_directories(${PROJECT_NAME} PRIVATE ${SRC_DIR})
 caulk_register(${PROJECT_NAME})
