@@ -27,7 +27,9 @@ void stMenuDraw() {
 	const int fs = 40, pad = 5;
 
 	ClearBackground(RAYWHITE);
-	if (!lobbyCount())
+	if (lobbyCount())
+		DrawText("SPACE TO JOIN!!!", pad, pad, fs, GREEN);
+	else
 		DrawText("Loading lobbies...", pad, pad, fs, BLACK);
 	DrawText("C to create a lobby", pad, pad + fs, fs, RED);
 }
