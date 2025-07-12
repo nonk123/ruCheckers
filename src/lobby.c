@@ -58,10 +58,12 @@ void requestCreateLobby() {
 
 void requestJoinLobby() {
 	CSteamID id;
-	if (getLobbyId(0, &id)) {
-		ISteamMatchmaking* mm = caulk_SteamMatchmaking();
-		caulk_ISteamMatchmaking_JoinLobby(mm, id);
-	}
+	for (size_t idx = 0; idx < lobbyCount(); idx++)
+		if (getLobbyId(idx, &id)) {
+			ISteamMatchmaking* mm = caulk_SteamMatchmaking();
+			caulk_ISteamMatchmaking_JoinLobby(mm, id);
+			return;
+		}
 }
 
 bool getLobbyId(size_t idx, CSteamID* out) {
